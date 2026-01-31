@@ -9,7 +9,9 @@ Este projeto utiliza o poder da **Blockchain** para trazer liquidez, transparên
 ---
 
 ## 👨‍💻 Autor
-**Wesley** — *Desenvolvedor e Visionário RWA* 💎
+**Wesley Rodrigues Tereciani** 
+— *Desenvolvedor e Visionário RWA* 💎
+— *Especialista Blockchain* 💎
 
 ---
 
@@ -164,5 +166,3 @@ Distribuído sob a licença **MIT**. Veja `LICENSE` para mais informações. ⚖
 ---
 
 "O futuro do mercado imobiliário é on-chain." 🏠💎🚀
-🚀 Autor: Wesley Rodrigues Tereciani
-💎 Desenvolvedor Especialista Blockchain
