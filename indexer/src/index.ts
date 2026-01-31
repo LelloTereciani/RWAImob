@@ -1,3 +1,4 @@
+import { and, eq } from "drizzle-orm";
 import { ponder } from "ponder:registry";
 import { property, offer, transaction } from "ponder:schema";
 
@@ -52,18 +53,22 @@ ponder.on("PropertySale:OfferMade", async ({ event, context }: any) => {
 });
 
 ponder.on("PropertySale:OfferWithdrawn", async ({ event, context }: any) => {
-    const { propertyId, buyer } = event.args;
+    const { propertyId, buyer, amount } = event.args;
 
-    // Buscando ofertas ativas deste comprador para este imóvel
-    const activeOffers = await context.db.findMany(offer, {
-        where: {
-            propertyId: Number(propertyId),
-            buyer: buyer,
-            active: true
-        }
-    });
+    const activeOffers = await context.db.sql
+        .select()
+        .from(offer)
+        .where(
+            and(
+                eq(offer.propertyId, Number(propertyId)),
+                eq(offer.buyer, buyer),
+                eq(offer.amount, amount),
+                eq(offer.active, true)
+            )
+        );
 
-    for (const off of activeOffers.items) {
+    // Desativamos a primeira encontrada (ou todas, se houver duplicatas no cache/estado)
+    for (const off of activeOffers) {
         await context.db.update(offer, { id: off.id }).set({
             active: false
         });
@@ -72,7 +77,16 @@ ponder.on("PropertySale:OfferWithdrawn", async ({ event, context }: any) => {
 
 ponder.on("PropertySale:PropertyStatusChanged", async ({ event, context }: any) => {
     const { propertyId, newStatus } = event.args;
+
     await context.db.update(property, { id: Number(propertyId) }).set({
-        forSale: newStatus
+        forSale: newStatus,
+    });
+});
+
+ponder.on("PropertySale:PropertyPriceUpdated", async ({ event, context }: any) => {
+    const { propertyId, newPrice } = event.args;
+
+    await context.db.update(property, { id: Number(propertyId) }).set({
+        price: newPrice,
     });
 });

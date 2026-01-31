@@ -7,7 +7,10 @@ export default createConfig({
   chains: {
     localhost: {
       id: 31337,
-      rpc: "http://127.0.0.1:8545",
+      rpc:
+        process.env.PONDER_RPC_URL_1 ??
+        process.env.PONDER_RPC_URL_31337 ??
+        "http://127.0.0.1:8545",
     },
   },
   contracts: {

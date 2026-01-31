@@ -246,6 +246,45 @@ contract PropertySaleUnitTest is Test {
         propertySale.withdrawOffer(id, 0);
     }
 
+    function testDelistProperty() public {
+        vm.prank(owner);
+        uint256 id = propertySale.listProperty("Sao Paulo - SP", 1 ether, "ipfs://test");
+
+        vm.prank(owner);
+        propertySale.delistProperty(id);
+
+        (, , bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        assertFalse(forSale);
+    }
+
+    function testUpdatePropertyPrice() public {
+        vm.prank(owner);
+        uint256 id = propertySale.listProperty("Sao Paulo - SP", 1 ether, "ipfs://test");
+
+        vm.prank(owner);
+        propertySale.updatePropertyPrice(id, 2 ether);
+
+        (, uint256 price, , , , ) = propertySale.getPropertyDetails(id);
+        assertEq(price, 2 ether);
+    }
+
+    function testRefundOfferByOwner() public {
+        vm.prank(owner);
+        uint256 id = propertySale.listProperty("Sao Paulo - SP", 1 ether, "ipfs://test");
+
+        vm.deal(buyer, 1 ether);
+        uint256 balanceBefore = buyer.balance;
+        vm.prank(buyer);
+        propertySale.makeOffer{value: 1 ether}(id);
+
+        vm.prank(owner);
+        propertySale.refundOffer(id, 0);
+
+        IPropertySale.Offer[] memory offers = propertySale.getPropertyOffers(id);
+        assertFalse(offers[0].active);
+        assertEq(buyer.balance, balanceBefore);
+    }
+
     // --- Utility/View Tests ---
 
     function testTokenURI() public {

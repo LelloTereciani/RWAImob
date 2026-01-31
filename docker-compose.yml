@@ -3,7 +3,9 @@ services:
     image: ghcr.io/foundry-rs/foundry:latest
     ports:
       - "8545:8545"
-    entrypoint: [ "anvil", "--host", "0.0.0.0" ]
+    volumes:
+      - ./.anvil:/anvil
+    entrypoint: [ "anvil", "--host", "0.0.0.0", "--state", "/anvil/state.json", "--state-interval", "5" ]
 
   db:
     image: postgres:15-alpine
@@ -16,6 +18,23 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  indexer:
+    image: node:20-alpine
+    working_dir: /app/indexer
+    volumes:
+      - ./:/app
+    environment:
+      PONDER_RPC_URL_1: http://anvil:8545
+      PONDER_RPC_URL_31337: http://anvil:8545
+      DATABASE_URL: postgres://lello:password@db:5432/rwaimob
+      DATABASE_SCHEMA: ponder
+    depends_on:
+      - anvil
+      - db
+    ports:
+      - "42069:42069"
+    command: sh -c "npm install && npm run dev"
 
 volumes:
   postgres_data:

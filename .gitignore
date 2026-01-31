@@ -40,3 +40,4 @@ Thumbs.db
 *.log
 contract_address.txt
 0
+.anvil/

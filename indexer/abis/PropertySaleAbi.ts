@@ -74,6 +74,19 @@ export const PropertySaleAbi = [
   },
   {
     "type": "function",
+    "name": "delistProperty",
+    "inputs": [
+      {
+        "name": "propertyId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "estimateGasForTransaction",
     "inputs": [
       {
@@ -345,6 +358,24 @@ export const PropertySaleAbi = [
   },
   {
     "type": "function",
+    "name": "refundOffer",
+    "inputs": [
+      {
+        "name": "propertyId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "offerIndex",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "relistProperty",
     "inputs": [
       {
@@ -552,6 +583,24 @@ export const PropertySaleAbi = [
   },
   {
     "type": "function",
+    "name": "updatePropertyPrice",
+    "inputs": [
+      {
+        "name": "propertyId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "newPrice",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "withdrawOffer",
     "inputs": [
       {
@@ -727,6 +776,25 @@ export const PropertySaleAbi = [
         "type": "bytes32",
         "indexed": false,
         "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PropertyPriceUpdated",
+    "inputs": [
+      {
+        "name": "propertyId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "newPrice",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false

@@ -103,6 +103,39 @@ contract PropertySale is
         property.listedAt = uint64(block.timestamp);
         
         emit PropertyListed(propertyId, msg.sender, newPrice, property.locationHash);
+        emit PropertyStatusChanged(propertyId, true);
+    }
+
+    function delistProperty(uint256 propertyId)
+        external
+        override
+        nonReentrant
+    {
+        PropertyValidation.validatePropertyId(propertyId);
+        Property storage property = _properties[propertyId];
+
+        require(ownerOf(propertyId) == msg.sender, "RWA: Not property owner");
+        require(property.forSale, "RWA: Property not for sale");
+
+        property.forSale = false;
+
+        emit PropertyStatusChanged(propertyId, false);
+    }
+
+    function updatePropertyPrice(uint256 propertyId, uint256 newPrice)
+        external
+        override
+        nonReentrant
+    {
+        PropertyValidation.validatePropertyId(propertyId);
+        PropertyValidation.validatePrice(newPrice);
+        Property storage property = _properties[propertyId];
+
+        require(ownerOf(propertyId) == msg.sender, "RWA: Not property owner");
+
+        property.price = uint96(newPrice);
+
+        emit PropertyPriceUpdated(propertyId, newPrice);
     }
     
     function buyProperty(uint256 propertyId) 
@@ -207,6 +240,27 @@ contract PropertySale is
         require(success, "RWA: Withdrawal failed");
         
         emit OfferWithdrawn(propertyId, msg.sender, amount);
+    }
+
+    function refundOffer(uint256 propertyId, uint256 offerIndex)
+        external
+        override
+        nonReentrant
+    {
+        PropertyValidation.validatePropertyId(propertyId);
+        Offer storage offer = _propertyOffers[propertyId][offerIndex];
+
+        require(ownerOf(propertyId) == msg.sender, "RWA: Not property owner");
+        require(offer.active, "RWA: Offer not active");
+
+        address buyer = offer.buyer;
+        uint256 amount = offer.amount;
+        offer.active = false;
+
+        (bool success, ) = buyer.call{value: amount}("");
+        require(success, "RWA: Refund failed");
+
+        emit OfferWithdrawn(propertyId, buyer, amount);
     }
     
     function _processPayment(address recipient, uint256 amount) private {

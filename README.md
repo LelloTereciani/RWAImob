@@ -4,6 +4,8 @@ Bem-vindo ao **RWA Real Estate**, uma plataforma descentralizada de ponta para a
 
 Este projeto utiliza o poder da **Blockchain** para trazer liquidez, transparência e segurança ao mercado imobiliário.
 
+> ⚠️ **Projeto de estudos**: este repositório é voltado para aprendizado, prototipagem e experimentação. Não é um produto pronto para produção.
+
 ---
 
 ## 👨‍💻 Autor
@@ -95,11 +97,56 @@ Após iniciar o ambiente, você precisa cadastrar os imóveis para que eles apar
 
 ## 🛠️ Ferramentas Auxiliares (CLI)
 
-Criamos scripts facilitadores para gerenciar seus ativos:
+Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
-- 📝 **Listar Ativo**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`
-- 🔄 **Fazer Upgrade**: `./upgrade-contract.sh` (Manter dados e atualizar lógica)
-- 🏢 **Relistar**: Interface disponível via `PropertyCard` no navegador.
+- 🚀 **Subir o ambiente completo**: `./start-local.sh`  
+  Sobe Docker (Anvil + Postgres + Indexer), faz deploy opcional, sincroniza ABI e inicia o frontend.
+- 🏠 **Listar imóvel**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`  
+  Registra um imóvel no contrato via Foundry.
+- 🌱 **Semear imóveis padrão**: `./seed-assets.sh`  
+  Popular o marketplace com exemplos rápidos.
+- 📋 **Listar imóveis (via Ponder)**: `./list-properties.sh`  
+  Consulta o indexador e imprime status/valores.
+- 🔄 **Upgrade do contrato**: `./upgrade-contract.sh`  
+  Faz upgrade da implementação via ProxyAdmin.
+- 🧩 **Relistar (helper)**: `./relist-property.sh <id> <novo_preco>`  
+  Script de apoio/diagnóstico; pode sugerir redeploy caso a função não exista no contrato atual.
+
+---
+
+## 🧭 Futuras Implementações (Roadmap de Estudos)
+
+- ✅ **Filtro e ordenação** por status, preço e data de listagem.
+- 🔔 **Notificações on-chain** e histórico detalhado de transações por usuário.
+- 🧩 **Metadata dinâmica** (ex.: atualização de status do imóvel e documentação).
+- 🧮 **Precificação com oráculos** (USD/ETH) e conversão automática.
+- 🔐 **Permissões granulares** para operadores/administradores.
+- 🧾 **Relatórios exportáveis** (CSV/JSON) para auditoria e análises.
+- 🏦 **Fluxos multiassinatura** para operações sensíveis.
+
+---
+
+## ✅ Novos Testes Recomendados
+
+- **Unidade**: validações de preço, status e limites (0, overflow, edge cases).
+- **Integração**: compra, oferta, aceitação e relistagem com múltiplos usuários.
+- **Reentrância e CEI**: cenários maliciosos e contratos receptores.
+- **Indexação**: consistência entre eventos e estado indexado (Ponder).
+- **Frontend**: estados de loading/erro/sucesso e updates após confirmação.
+- **Gas & performance**: benchmarks e otimizações de custo por operação.
+
+---
+
+## ⚖️ Medidas de Compliance (Para Futuro)
+
+> Nota: itens abaixo são sugestões para estudos e planejamento. Não constituem aconselhamento jurídico.
+
+- **KYC/AML** para compradores e vendedores quando aplicável.
+- **LGPD/GDPR**: minimização de dados pessoais, consentimento e retenção.
+- **Auditoria de smart contracts** por terceiros antes de produção.
+- **Políticas de listagem** (verificação de documentação do imóvel).
+- **Gestão de risco** e monitoramento de operações suspeitas.
+- **Adequação regulatória** para tokens/RWA na jurisdição alvo.
 
 ---
 
@@ -116,4 +163,6 @@ Distribuído sob a licença **MIT**. Veja `LICENSE` para mais informações. ⚖
 
 ---
 
-> "O futuro do mercado imobiliário é on-chain." 🏠💎🚀
+"O futuro do mercado imobiliário é on-chain." 🏠💎🚀
+🚀 Autor: Wesley Rodrigues Tereciani
+💎 Desenvolvedor Especialista Blockchain

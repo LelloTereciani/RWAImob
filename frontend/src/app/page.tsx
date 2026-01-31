@@ -21,7 +21,7 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-8">
             <a href="#marketplace" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Marketplace</a>
-            <a href="#" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Portfólio</a>
+            <a href="#" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Home</a>
             <ConnectButton />
           </div>
         </div>
@@ -50,9 +50,9 @@ export default function LandingPage() {
             <a href="#marketplace" className="h-14 px-8 bg-white text-slate-950 font-bold rounded-2xl hover:scale-105 transition-transform flex items-center active:scale-95 shadow-xl shadow-white/10">
               Explorar Marketplace
             </a>
-            <button className="h-14 px-8 bg-slate-900 border border-white/10 font-bold rounded-2xl hover:bg-slate-800 transition-colors">
+            <a href="#how-it-works" className="h-14 px-8 bg-slate-900 border border-white/10 font-bold rounded-2xl hover:bg-slate-800 transition-colors inline-flex items-center justify-center">
               Como Funciona
-            </button>
+            </a>
           </div>
         </div>
 
@@ -64,10 +64,59 @@ export default function LandingPage() {
               <p className="text-slate-400 mt-2">Ativos tokenizados sob gestão e monitoramento via Ponder.</p>
             </div>
             <div className="h-[1px] flex-1 bg-white/5 mx-10 mb-4 hidden md:block"></div>
-            <button className="text-emerald-400 font-semibold text-sm hover:underline transition-all">Ver todos os ativos</button>
           </div>
 
           <Marketplace />
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="max-w-7xl mx-auto mt-32">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-4xl font-bold tracking-tight">Como Funciona</h2>
+              <p className="text-slate-400 mt-2">Processo e segurança na compra e venda on-chain.</p>
+            </div>
+            <div className="h-[1px] flex-1 bg-white/5 mx-10 mb-4 hidden md:block"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 rounded-3xl bg-slate-900/50 border border-white/5 backdrop-blur-sm hover:border-emerald-500/30 transition-all">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest">1. Listagem</p>
+              <h3 className="text-2xl font-bold mt-3">Tokenização do imóvel</h3>
+              <p className="text-slate-400 mt-3 text-sm leading-relaxed">
+                O imóvel é registrado como NFT (ERC-721) com preço, metadata e histórico. A listagem é pública e verificável na blockchain.
+              </p>
+            </div>
+            <div className="p-8 rounded-3xl bg-slate-900/50 border border-white/5 backdrop-blur-sm hover:border-emerald-500/30 transition-all">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest">2. Negociação</p>
+              <h3 className="text-2xl font-bold mt-3">Compra direta ou oferta</h3>
+              <p className="text-slate-400 mt-3 text-sm leading-relaxed">
+                Compradores podem adquirir pelo preço fixo ou enviar ofertas. O vendedor aceita a melhor proposta e a transferência ocorre on-chain.
+              </p>
+            </div>
+            <div className="p-8 rounded-3xl bg-slate-900/50 border border-white/5 backdrop-blur-sm hover:border-emerald-500/30 transition-all">
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest">3. Segurança</p>
+              <h3 className="text-2xl font-bold mt-3">Liquidação segura</h3>
+              <p className="text-slate-400 mt-3 text-sm leading-relaxed">
+                O contrato segue padrões OpenZeppelin, evita reentrância e usa o padrão CEI. Pagamentos e transferências são atômicos.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-7 rounded-3xl bg-slate-900/30 border border-white/5">
+              <h4 className="text-lg font-bold">Transparência e rastreabilidade</h4>
+              <p className="text-slate-400 mt-2 text-sm leading-relaxed">
+                Todas as operações ficam registradas em eventos e podem ser auditadas em tempo real via indexação do Ponder.
+              </p>
+            </div>
+            <div className="p-7 rounded-3xl bg-slate-900/30 border border-white/5">
+              <h4 className="text-lg font-bold">Custódia do usuário</h4>
+              <p className="text-slate-400 mt-2 text-sm leading-relaxed">
+                Você mantém a custódia da sua carteira. As transações exigem confirmação e não há intermediários.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Stats / Features Grid */}

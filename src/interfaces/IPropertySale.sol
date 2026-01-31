@@ -29,14 +29,18 @@ interface IPropertySale {
     event OfferMade(uint256 indexed propertyId, address indexed buyer, uint256 amount);
     event OfferWithdrawn(uint256 indexed propertyId, address indexed buyer, uint256 amount);
     event PropertyStatusChanged(uint256 indexed propertyId, bool newStatus);
+    event PropertyPriceUpdated(uint256 indexed propertyId, uint256 newPrice);
     
     // Funções principais
     function listProperty(string calldata location, uint256 price, string calldata tokenURI) external returns (uint256);
     function relistProperty(uint256 propertyId, uint256 newPrice) external;
+    function delistProperty(uint256 propertyId) external;
+    function updatePropertyPrice(uint256 propertyId, uint256 newPrice) external;
     function buyProperty(uint256 propertyId) external payable;
     function makeOffer(uint256 propertyId) external payable;
     function acceptOffer(uint256 propertyId, uint256 offerIndex) external;
     function withdrawOffer(uint256 propertyId, uint256 offerIndex) external;
+    function refundOffer(uint256 propertyId, uint256 offerIndex) external;
     
     // Funções view
     function getPropertyDetails(uint256 propertyId) external view returns (address owner, uint256 price, bool forSale, uint256 listedAt, uint256 soldAt, bytes32 locationHash);
