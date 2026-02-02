@@ -5,6 +5,7 @@ export const property = onchainTable("property", (t) => ({
   owner: t.text().notNull(),
   price: t.bigint().notNull(),
   forSale: t.boolean().notNull(),
+  location: t.text().notNull(),
   locationHash: t.text().notNull(),
   listedAt: t.bigint().notNull(),
   soldAt: t.bigint(),

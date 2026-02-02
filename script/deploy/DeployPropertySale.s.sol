@@ -12,7 +12,7 @@ import "../../src/contracts/PropertySale.sol";
  */
 contract DeployPropertySale is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        uint256 deployerPrivateKey = uint256(vm.envBytes32("PRIVATE_KEY"));
         address deployer = vm.addr(deployerPrivateKey);
         
         console.log("Iniciando deploy RWA Multichain");

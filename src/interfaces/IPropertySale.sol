@@ -13,6 +13,7 @@ interface IPropertySale {
         uint64 soldAt;
         address owner;
         bool forSale;
+        string location;
         bytes32 locationHash;
     }
     
@@ -24,7 +25,13 @@ interface IPropertySale {
     }
     
     // Eventos
-    event PropertyListed(uint256 indexed propertyId, address indexed seller, uint256 price, bytes32 locationHash);
+    event PropertyListed(
+        uint256 indexed propertyId,
+        address indexed seller,
+        uint256 price,
+        string location,
+        bytes32 locationHash
+    );
     event PropertySold(uint256 indexed propertyId, address indexed seller, address indexed buyer, uint256 price, uint256 gasUsed);
     event OfferMade(uint256 indexed propertyId, address indexed buyer, uint256 amount);
     event OfferWithdrawn(uint256 indexed propertyId, address indexed buyer, uint256 amount);
@@ -43,7 +50,18 @@ interface IPropertySale {
     function refundOffer(uint256 propertyId, uint256 offerIndex) external;
     
     // Funções view
-    function getPropertyDetails(uint256 propertyId) external view returns (address owner, uint256 price, bool forSale, uint256 listedAt, uint256 soldAt, bytes32 locationHash);
+    function getPropertyDetails(uint256 propertyId)
+        external
+        view
+        returns (
+            address owner,
+            uint256 price,
+            bool forSale,
+            uint256 listedAt,
+            uint256 soldAt,
+            string memory location,
+            bytes32 locationHash
+        );
     function getOwnerProperties(address owner) external view returns (uint256[] memory);
     function getPropertyOffers(uint256 propertyId) external view returns (Offer[] memory);
     

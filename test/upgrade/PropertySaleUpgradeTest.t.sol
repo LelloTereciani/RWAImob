@@ -41,7 +41,7 @@ contract PropertySaleUpgradeTest is Test {
 
         uint256 totalVolumePre = propertySale.totalVolume();
         uint256 transactionCountPre = propertySale.transactionCount();
-        (address pOwner, , , , , ) = propertySale.getPropertyDetails(id);
+        (address pOwner, , , , , , ) = propertySale.getPropertyDetails(id);
 
         assertEq(totalVolumePre, 1 ether);
         assertEq(transactionCountPre, 1);
@@ -70,7 +70,7 @@ contract PropertySaleUpgradeTest is Test {
         assertEq(propertySaleV2.totalVolume(), totalVolumePre, "Volume should be preserved");
         assertEq(propertySaleV2.transactionCount(), transactionCountPre, "Count should be preserved");
         
-        (address pOwnerPost, , bool pForSalePost, , , ) = propertySaleV2.getPropertyDetails(id);
+        (address pOwnerPost, , bool pForSalePost, , , , ) = propertySaleV2.getPropertyDetails(id);
         assertEq(pOwnerPost, buyer, "Owner should be preserved");
         assertEq(pForSalePost, false, "Sold status should be preserved");
 

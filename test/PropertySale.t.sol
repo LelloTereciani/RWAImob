@@ -37,7 +37,7 @@ contract PropertySaleTest is Test {
         uint256 id = propertySale.listProperty("Apartamento Legal", 1 ether, "ipfs://uri");
         assertEq(id, 1);
         
-        (address pOwner, uint256 price, bool forSale, , , ) = propertySale.getPropertyDetails(1);
+        (address pOwner, uint256 price, bool forSale, , , , ) = propertySale.getPropertyDetails(1);
         assertEq(pOwner, owner);
         assertEq(price, 1 ether);
         assertTrue(forSale);
@@ -51,7 +51,7 @@ contract PropertySaleTest is Test {
         vm.prank(buyer);
         propertySale.buyProperty{value: 1 ether}(1);
 
-        (address pOwner, , bool forSale, , , ) = propertySale.getPropertyDetails(1);
+        (address pOwner, , bool forSale, , , , ) = propertySale.getPropertyDetails(1);
         assertEq(pOwner, buyer);
         assertFalse(forSale);
     }

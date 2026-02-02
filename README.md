@@ -36,9 +36,34 @@ Este projeto utiliza o poder da **Blockchain** para trazer liquidez, transparên
 
 ---
 
+## 🌐 Rede Sepolia (Testnet) — Uso Exclusivo
+
+Este projeto foi configurado **exclusivamente** para a **testnet Sepolia**. Não use em mainnet.
+Garanta no `.env`:
+
+- `PONDER_RPC_URL_11155111`
+- `RPC_URL`
+- `NEXT_PUBLIC_CONTRACT_ADDRESS`
+- `NEXT_PUBLIC_SEPOLIA_RPC_URL`
+- `NEXT_PUBLIC_PONDER_URL`
+
+---
+
+## 🚰 Faucet Sepolia (Test ETH)
+
+Para obter ETH de teste na Sepolia, use um faucet:
+
+- Alchemy Sepolia Faucet: https://www.alchemy.com/dapps/sepolia-faucet
+- Chainlink Faucet (Sepolia): https://chain.link/faucets
+- Alchemy Testnet Faucets (lista): https://www.alchemy.com/faucets
+
+> Você só precisa do **endereço público** da carteira (não compartilhe a chave privada).
+
+---
+
 ## 🚀 Como Iniciar (Ambiente Automatizado)
 
-A forma mais rápida de subir todo o ecossistema (Blockchain, Indexador e Frontend) é usando o script de automação:
+A forma mais rápida de subir o **ambiente local** (Postgres + Indexador local + Frontend) é usando o script de automação:
 
 ```bash
 # ⚡ Apenas um comando para subir tudo!
@@ -47,11 +72,35 @@ A forma mais rápida de subir todo o ecossistema (Blockchain, Indexador e Fronte
 
 ---
 
+## 🚀 Deploy Real na Sepolia (Passo a Passo)
+
+1) **Deploy do contrato**
+```bash
+./deploy-sepolia.sh
+```
+
+2) **Subir indexador (Ponder)**
+```bash
+docker compose up -d --force-recreate indexer
+```
+
+3) **Semear imóveis**
+```bash
+./seed-assets.sh
+```
+
+4) **Verificar**
+```bash
+./list-properties.sh
+```
+
+---
+
 ## 🛠️ Passo a Passo Manual (Opcional)
 
 Caso prefira subir cada serviço individualmente:
 
-### 1. 🏗️ Infraestrutura (Anvil & Postgres)
+### 1. 🏗️ Infraestrutura (Postgres + Indexer)
 ```bash
 docker compose up -d
 ```
@@ -102,7 +151,9 @@ Após iniciar o ambiente, você precisa cadastrar os imóveis para que eles apar
 Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
 - 🚀 **Subir o ambiente completo**: `./start-local.sh`  
-  Sobe Docker (Anvil + Postgres + Indexer), faz deploy opcional, sincroniza ABI e inicia o frontend.
+  Sobe Docker (Postgres + Indexer), faz deploy opcional na Sepolia, sincroniza ABI e inicia o frontend.
+- 🚀 **Deploy real na Sepolia**: `./deploy-sepolia.sh`  
+  Faz deploy do contrato, atualiza `NEXT_PUBLIC_CONTRACT_ADDRESS` e `PONDER_START_BLOCK`.
 - 🏠 **Listar imóvel**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`  
   Registra um imóvel no contrato via Foundry.
 - 🌱 **Semear imóveis padrão**: `./seed-assets.sh`  

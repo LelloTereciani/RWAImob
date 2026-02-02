@@ -78,12 +78,13 @@ contract PropertySale is
             soldAt: 0,
             owner: msg.sender,
             forSale: true,
+            location: location,
             locationHash: locationHash
         });
         
         _ownerProperties[msg.sender].push(propertyId);
         
-        emit PropertyListed(propertyId, msg.sender, price, locationHash);
+        emit PropertyListed(propertyId, msg.sender, price, location, locationHash);
         return propertyId;
     }
     
@@ -102,7 +103,7 @@ contract PropertySale is
         property.forSale = true;
         property.listedAt = uint64(block.timestamp);
         
-        emit PropertyListed(propertyId, msg.sender, newPrice, property.locationHash);
+        emit PropertyListed(propertyId, msg.sender, newPrice, property.location, property.locationHash);
         emit PropertyStatusChanged(propertyId, true);
     }
 
@@ -284,15 +285,31 @@ contract PropertySale is
         return _propertyOffers[propertyId];
     }
     
-    function getPropertyDetails(uint256 propertyId) 
-        external 
-        view 
-        override 
-        returns (address owner, uint256 price, bool forSale, uint256 listedAt, uint256 soldAt, bytes32 locationHash)
+    function getPropertyDetails(uint256 propertyId)
+        external
+        view
+        override
+        returns (
+            address owner,
+            uint256 price,
+            bool forSale,
+            uint256 listedAt,
+            uint256 soldAt,
+            string memory location,
+            bytes32 locationHash
+        )
     {
         PropertyValidation.validatePropertyId(propertyId);
         Property memory property = _properties[propertyId];
-        return (property.owner, property.price, property.forSale, property.listedAt, property.soldAt, property.locationHash);
+        return (
+            property.owner,
+            property.price,
+            property.forSale,
+            property.listedAt,
+            property.soldAt,
+            property.location,
+            property.locationHash
+        );
     }
     
     function estimateGasForTransaction(uint256 propertyId, uint256 offerAmount) external view override returns (uint256) {

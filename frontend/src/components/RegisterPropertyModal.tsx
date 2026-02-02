@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWriteContract, useAccount, useReadContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
 import { parseEther } from 'viem';
 import { PropertySaleAbi } from '../abis/PropertySaleAbi';
@@ -17,8 +17,9 @@ export function RegisterPropertyModal() {
         price: '',
         uri: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c'
     });
+    const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const { data: contractOwner } = useReadContract({
+    const { data: contractOwner, isLoading: isOwnerLoading } = useReadContract({
         address: CONTRACT_ADDRESS,
         abi: PropertySaleAbi,
         functionName: 'owner',
@@ -36,6 +37,26 @@ export function RegisterPropertyModal() {
         });
     }, [hash, address, chainId, addRecentTransaction]);
 
+    useEffect(() => {
+        if (!isSuccess) return;
+        if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+        successTimeoutRef.current = setTimeout(() => {
+            setIsOpen(false);
+            setForm({
+                location: '',
+                price: '',
+                uri: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c'
+            });
+        }, 2000);
+        return () => {
+            if (successTimeoutRef.current) {
+                clearTimeout(successTimeoutRef.current);
+                successTimeoutRef.current = null;
+            }
+        };
+    }, [isSuccess]);
+
+
     const isPlatformOwner = address && contractOwner && address.toLowerCase() === (contractOwner as string).toLowerCase();
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -50,6 +71,14 @@ export function RegisterPropertyModal() {
         });
     };
 
+
+    if (isOwnerLoading) {
+        return (
+            <div className="mb-12">
+                <div className="h-[52px] w-[260px] rounded-2xl bg-slate-900/60 border border-white/10 animate-pulse" />
+            </div>
+        );
+    }
     if (!isPlatformOwner) return null;
 
     return (
@@ -117,6 +146,7 @@ export function RegisterPropertyModal() {
 
                             {isSuccess && <p className="text-emerald-400 text-center text-sm font-bold animate-bounce">🚀 Ativo registrado com sucesso!</p>}
                         </form>
+
                     </div>
                 </div>
             )}

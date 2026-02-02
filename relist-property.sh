@@ -23,31 +23,28 @@ echo "🏠 Re-listando Propriedade #$PROPERTY_ID"
 echo "  Novo Preço: $NEW_PRICE_ETH ETH ($NEW_PRICE_WEI Wei)"
 echo ""
 
-# Nota: Como o upgrade falhou, vamos usar um workaround
-# O contrato atual não tem relistProperty(), então vamos orientar o usuário
-
-echo "⚠️  ATENÇÃO: O contrato atual não suporta re-listagem direta."
-echo ""
-echo "Para vender sua propriedade, você tem 2 opções:"
-echo ""
-echo "1️⃣  Aceitar Ofertas:"
-echo "   - Aguarde ofertas de compradores"
-echo "   - Use acceptOffer(propertyId, offerIndex)"
-echo ""
-echo "2️⃣  Fazer Upgrade do Contrato (recomendado):"
-echo "   - Pare o Anvil e Ponder"
-echo "   - Execute: ./start-local.sh"
-echo "   - Isso fará um redeploy com a nova função relistProperty()"
-echo ""
-
-read -p "Deseja fazer o redeploy agora? (s/n): " resposta
-
-if [ "$resposta" = "s" ] || [ "$resposta" = "S" ]; then
-    echo "🔄 Reiniciando ambiente..."
-    pkill -f anvil
-    pkill -f ponder
-    sleep 2
-    ./start-local.sh
-else
-    echo "❌ Operação cancelada."
+if [ -f .env ]; then
+    export $(cat .env | grep -v '#' | xargs)
 fi
+
+RPC_URL="${RPC_URL:-https://ethereum-sepolia-rpc.publicnode.com}"
+PRIVATE_KEY="${PRIVATE_KEY}"
+CONTRACT_ADDRESS="${NEXT_PUBLIC_CONTRACT_ADDRESS}"
+
+if [ -z "$PRIVATE_KEY" ] || [ -z "$CONTRACT_ADDRESS" ]; then
+    echo "Erro: PRIVATE_KEY e NEXT_PUBLIC_CONTRACT_ADDRESS são obrigatórios no .env"
+    exit 1
+fi
+
+echo "📍 Contrato: $CONTRACT_ADDRESS"
+echo "🔄 Enviando transação relistProperty..."
+
+cast send "$CONTRACT_ADDRESS" \
+    "relistProperty(uint256,uint256)" \
+    "$PROPERTY_ID" \
+    "$NEW_PRICE_WEI" \
+    --rpc-url "$RPC_URL" \
+    --private-key "$PRIVATE_KEY" \
+    --legacy
+
+echo "✅ Relistagem enviada!"

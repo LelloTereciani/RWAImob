@@ -6,7 +6,7 @@ import "../../src/contracts/PropertySale.sol";
 
 contract ListProperty is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        uint256 deployerPrivateKey = uint256(vm.envBytes32("PRIVATE_KEY"));
         address contractAddress = vm.envAddress("PROPERTYSALE_ADDRESS");
         
         string memory location = vm.envString("LOCATION");

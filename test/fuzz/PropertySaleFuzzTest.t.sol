@@ -38,7 +38,7 @@ contract PropertySaleFuzzTest is Test {
         vm.prank(owner);
         uint256 id = propertySale.listProperty(location, price, "ipfs://fuzz");
         
-        (address pOwner, uint256 pPrice, bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        (address pOwner, uint256 pPrice, bool forSale, , , , ) = propertySale.getPropertyDetails(id);
         assertEq(pOwner, owner);
         assertEq(pPrice, price);
         assertTrue(forSale);
@@ -54,7 +54,7 @@ contract PropertySaleFuzzTest is Test {
         vm.prank(buyer);
         propertySale.buyProperty{value: paymentAmount}(id);
 
-        (address pOwner, , bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        (address pOwner, , bool forSale, , , , ) = propertySale.getPropertyDetails(id);
         assertEq(pOwner, buyer);
         assertFalse(forSale);
     }

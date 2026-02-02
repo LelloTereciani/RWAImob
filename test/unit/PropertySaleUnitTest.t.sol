@@ -42,7 +42,7 @@ contract PropertySaleUnitTest is Test {
         uint256 id = propertySale.listProperty("Sao Paulo - SP", 1 ether, "ipfs://test");
         assertEq(id, 1);
         
-        (address propertyOwner, uint256 price, bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        (address propertyOwner, uint256 price, bool forSale, , , , ) = propertySale.getPropertyDetails(id);
         assertEq(propertyOwner, owner);
         assertEq(price, 1 ether);
         assertTrue(forSale);
@@ -82,7 +82,7 @@ contract PropertySaleUnitTest is Test {
         vm.prank(buyer);
         propertySale.buyProperty{value: 1 ether}(id);
 
-        (address propertyOwner, , bool forSale, , uint256 soldAt, ) = propertySale.getPropertyDetails(id);
+        (address propertyOwner, , bool forSale, , uint256 soldAt, , ) = propertySale.getPropertyDetails(id);
         assertEq(propertyOwner, buyer);
         assertFalse(forSale);
         assertTrue(soldAt > 0);
@@ -178,7 +178,7 @@ contract PropertySaleUnitTest is Test {
         vm.prank(owner);
         propertySale.acceptOffer(id, 0);
 
-        (address propertyOwner, , bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        (address propertyOwner, , bool forSale, , , , ) = propertySale.getPropertyDetails(id);
         assertEq(propertyOwner, buyer);
         assertFalse(forSale);
         assertEq(owner.balance, 1.2 ether);
@@ -253,7 +253,7 @@ contract PropertySaleUnitTest is Test {
         vm.prank(owner);
         propertySale.delistProperty(id);
 
-        (, , bool forSale, , , ) = propertySale.getPropertyDetails(id);
+        (, , bool forSale, , , , ) = propertySale.getPropertyDetails(id);
         assertFalse(forSale);
     }
 
@@ -264,7 +264,7 @@ contract PropertySaleUnitTest is Test {
         vm.prank(owner);
         propertySale.updatePropertyPrice(id, 2 ether);
 
-        (, uint256 price, , , , ) = propertySale.getPropertyDetails(id);
+        (, uint256 price, , , , , ) = propertySale.getPropertyDetails(id);
         assertEq(price, 2 ether);
     }
 

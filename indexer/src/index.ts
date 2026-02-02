@@ -3,13 +3,14 @@ import { ponder } from "ponder:registry";
 import { property, offer, transaction } from "ponder:schema";
 
 ponder.on("PropertySale:PropertyListed", async ({ event, context }: any) => {
-    const { propertyId, seller, price, locationHash } = event.args;
+    const { propertyId, seller, price, location, locationHash } = event.args;
 
     await context.db.insert(property).values({
         id: Number(propertyId),
         owner: seller,
         price: price,
         forSale: true,
+        location: location,
         locationHash: locationHash,
         listedAt: event.block.timestamp,
     }).onConflictDoUpdate({
@@ -17,6 +18,8 @@ ponder.on("PropertySale:PropertyListed", async ({ event, context }: any) => {
         forSale: true,
         listedAt: event.block.timestamp,
         owner: seller,
+        location: location,
+        locationHash: locationHash,
     });
 });
 

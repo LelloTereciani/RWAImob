@@ -184,6 +184,11 @@ export const PropertySaleAbi = [
         "internalType": "uint256"
       },
       {
+        "name": "location",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
         "name": "locationHash",
         "type": "bytes32",
         "internalType": "bytes32"
@@ -770,6 +775,12 @@ export const PropertySaleAbi = [
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "location",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
       },
       {
         "name": "locationHash",

@@ -60,15 +60,15 @@ contract PropertySaleIntegrationTest is Test {
         propertySale.acceptOffer(id2, 1);
 
         // --- Verificações de Propriedade ---
-        (address owner1, , bool forSale1, , , ) = propertySale.getPropertyDetails(id1);
+        (address owner1, , bool forSale1, , , , ) = propertySale.getPropertyDetails(id1);
         assertEq(owner1, buyerA, "Buyer A should own Property 1");
         assertFalse(forSale1, "Property 1 should be sold");
 
-        (address owner2, , bool forSale2, , , ) = propertySale.getPropertyDetails(id2);
+        (address owner2, , bool forSale2, , , , ) = propertySale.getPropertyDetails(id2);
         assertEq(owner2, buyerC, "Buyer C should own Property 2");
         assertFalse(forSale2, "Property 2 should be sold");
 
-        (address owner3, , bool forSale3, , , ) = propertySale.getPropertyDetails(id3);
+        (address owner3, , bool forSale3, , , , ) = propertySale.getPropertyDetails(id3);
         assertEq(owner3, owner, "Owner should still own Property 3");
         assertTrue(forSale3, "Property 3 should still be for sale");
 

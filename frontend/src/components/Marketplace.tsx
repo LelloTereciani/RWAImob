@@ -3,6 +3,7 @@
 import { useProperties } from '../hooks/useProperties';
 import { PropertyCard } from './PropertyCard';
 import { RegisterPropertyModal } from './RegisterPropertyModal';
+import { RemovePropertyModal } from './RemovePropertyModal';
 
 export function Marketplace() {
     const { data: properties, isLoading, error } = useProperties();
@@ -15,7 +16,10 @@ export function Marketplace() {
 
     return (
         <div className="py-10">
-            <RegisterPropertyModal />
+            <div className="flex flex-wrap gap-4 mb-10">
+                <RegisterPropertyModal />
+                <RemovePropertyModal />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {listedProperties.length > 0 ? (
                     listedProperties.map((property: any) => (

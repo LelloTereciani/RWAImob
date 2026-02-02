@@ -18,7 +18,10 @@ properties=(
 for prop in "${properties[@]}"; do
     IFS="|" read -r location price uri <<< "$prop"
     echo "🏠 Inserindo: $location..."
-    ./list-asset.sh "$location" "$price" "$uri" > /dev/null 2>&1
+    if ! ./list-asset.sh "$location" "$price" "$uri"; then
+        echo "❌ Falha ao inserir: $location"
+        exit 1
+    fi
 done
 
 echo "✅ Marketplace semeado com sucesso!"

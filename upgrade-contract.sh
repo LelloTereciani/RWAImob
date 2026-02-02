@@ -11,7 +11,7 @@ PROXY_ADDRESS="${NEXT_PUBLIC_CONTRACT_ADDRESS}"
 
 # Detectar ProxyAdmin se não estiver no env
 if [ -z "$PROXY_ADMIN_ADDRESS" ]; then
-    DEPLOYMENT_FILE="broadcast/DeployPropertySale.s.sol/31337/run-latest.json"
+    DEPLOYMENT_FILE="broadcast/DeployPropertySale.s.sol/11155111/run-latest.json"
     if [ -f "$DEPLOYMENT_FILE" ] && command -v jq &> /dev/null; then
         PROXY_ADMIN_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "ProxyAdmin") | .contractAddress' "$DEPLOYMENT_FILE" | tail -n 1)
     fi

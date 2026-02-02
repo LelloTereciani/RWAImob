@@ -16,7 +16,8 @@ interface PropertyProps {
         owner: string;
         price: string;
         forSale: boolean;
-        locationHash: string;
+        location?: string;
+        locationHash?: string;
     };
 }
 
@@ -361,8 +362,13 @@ export function PropertyCard({ property }: PropertyProps) {
 
             <div className="p-8 space-y-6">
                 <div>
-                    <h3 className="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors">Vila Real Estate #{property.id}</h3>
-                    <p className="text-slate-400 mt-2 line-clamp-1 text-xs">{property.locationHash}</p>
+                    <h3 className="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                        {property.location ? property.location : `Imóvel #${property.id}`}
+                    </h3>
+                    <p className="text-slate-500 mt-1 text-xs font-semibold uppercase tracking-wider">ID #{property.id}</p>
+                    {property.locationHash && (
+                        <p className="text-slate-400 mt-2 line-clamp-1 text-xs">{property.locationHash}</p>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-white/5">

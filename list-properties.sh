@@ -15,9 +15,9 @@ if ! command -v jq &> /dev/null; then
 fi
 
 response=$(curl -s -H 'content-type: application/json' \
-  --data '{"query":"{ propertys { items { id owner price forSale listedAt soldAt } } }"}' \
+  --data '{"query":"{ propertys { items { id owner price forSale listedAt soldAt location locationHash } } }"}' \
   "$PONDER_URL/graphql")
 
 echo "$response" | jq -r '
   .data.propertys.items[]
-  | "ID: \(.id) | Owner: \(.owner) | Price: \(.price) | ForSale: \(.forSale) | ListedAt: \(.listedAt) | SoldAt: \(.soldAt)"'
+  | "ID: \(.id) | Owner: \(.owner) | Price: \(.price) | ForSale: \(.forSale) | Location: \(.location) | LocationHash: \(.locationHash) | ListedAt: \(.listedAt) | SoldAt: \(.soldAt)"'

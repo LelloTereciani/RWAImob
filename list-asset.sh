@@ -7,7 +7,7 @@ fi
 
 # Fallback para valores padrão se não estiverem no .env
 RPC_URL="${RPC_URL:-http://127.0.0.1:8545}"
-CHAIN_ID="31337"
+CHAIN_ID="11155111"
 PRIVATE_KEY="${PRIVATE_KEY}"
 
 # Argumentos
