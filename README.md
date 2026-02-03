@@ -61,7 +61,7 @@ Para obter ETH de teste na Sepolia, use um faucet:
 
 ---
 
-## 🚀 Como Iniciar (Ambiente Automatizado)
+## 🚀 Como Iniciar (Ambiente Local)
 
 A forma mais rápida de subir o **ambiente local** (Postgres + Indexador local + Frontend) é usando o script de automação:
 
@@ -203,10 +203,57 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
 ---
 
-## 🌍 Acesso ao Marketplace
+## 🌍 Acesso ao Marketplace (Local)
 
 Após rodar os serviços, acesse:
-👉 **[http://localhost:3000](http://localhost:3000)**
+👉 **http://localhost:3000/RWAImob**
+
+API do Ponder:
+👉 **http://localhost:42069**
+
+---
+
+## 🌐 VPS (Hostinger) com Docker + Nginx (Produção/Estudos)
+
+Esta estrutura usa **Docker Compose** e expõe o frontend em:
+👉 **http://portifolio.cloud/RWAImob**
+
+O Ponder fica atrás de:
+👉 **http://portifolio.cloud/RWAImob/api**
+
+### ✅ Pré-requisitos na VPS
+- Docker + Docker Compose Plugin instalados
+- DNS apontando `portifolio.cloud` e `www.portifolio.cloud` para o IP da VPS
+- Porta 80 liberada (HTTPS será ativado depois)
+
+### 🧩 Arquivos usados
+- `docker-compose.prod.yml`
+- `nginx/conf.d/default.conf`
+- `nginx/ssl.conf.template`
+- `.env` (usado também em produção)
+
+### 🚀 Subir tudo na VPS
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+```
+
+### 🔒 Habilitar HTTPS (Let’s Encrypt)
+1) Adicione no `.env`:
+```bash
+LETSENCRYPT_EMAIL=seu-email@dominio.com
+```
+
+2) Execute:
+```bash
+./scripts/enable-https.sh
+```
+
+Após isso, o acesso deve ficar em:
+👉 **https://portifolio.cloud/RWAImob**
+
+### ✅ Healthcheck
+- `http://portifolio.cloud/healthz`
+- `http://portifolio.cloud/RWAImob/api/healthz`
 
 ---
 
