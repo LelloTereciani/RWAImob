@@ -3,7 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { request, gql } from 'graphql-request';
 
-const PONDER_URL = process.env.NEXT_PUBLIC_PONDER_URL || 'http://localhost:42069';
+const rawPonderUrl = process.env.NEXT_PUBLIC_PONDER_URL || '';
+const PONDER_URL =
+  rawPonderUrl.startsWith('/')
+    ? (typeof window !== 'undefined' ? `${window.location.origin}${rawPonderUrl}` : rawPonderUrl)
+    : (rawPonderUrl || 'http://localhost:42069');
 
 const GET_PROPERTIES = gql`
       query GetProperties {
