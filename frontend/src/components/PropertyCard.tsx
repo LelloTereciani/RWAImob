@@ -30,7 +30,7 @@ export function PropertyCard({ property }: PropertyProps) {
     // 1. Estados Locais
     const [offerAmount, setOfferAmount] = useState('');
     const [showOfferInput, setShowOfferInput] = useState(false);
-    const [pendingAction, setPendingAction] = useState<'buy' | 'relist' | 'delist' | 'offer' | 'accept' | 'withdraw' | 'refund' | null>(null);
+    const [pendingAction, setPendingAction] = useState<'buy' | 'relist' | 'offer' | 'accept' | 'withdraw' | 'refund' | null>(null);
     const [relistPrice, setRelistPrice] = useState<string | null>(null);
     const [localUserOffer, setLocalUserOffer] = useState<string | null>(null);
     const [offerGraceUntil, setOfferGraceUntil] = useState<number | null>(null);
@@ -95,7 +95,6 @@ export function PropertyCard({ property }: PropertyProps) {
         if (pendingAction === 'accept') description = `Aceite de oferta #${property.id}`;
         if (pendingAction === 'withdraw') description = `Retirada de oferta #${property.id}`;
         if (pendingAction === 'relist') description = `Relistagem do imóvel #${property.id}`;
-        if (pendingAction === 'delist') description = `Retirada de venda #${property.id}`;
         if (pendingAction === 'refund') description = `Reembolso de oferta #${property.id}`;
 
         addRecentTransaction({
@@ -133,8 +132,6 @@ export function PropertyCard({ property }: PropertyProps) {
         } else if (action === 'relist' && relistValue) {
             setLocalForSale(true);
             setLocalPrice(relistValue);
-        } else if (action === 'delist') {
-            setLocalForSale(false);
         } else if (action === 'accept') {
             setLocalForSale(false);
         } else if (action === 'offer') {
@@ -323,16 +320,6 @@ export function PropertyCard({ property }: PropertyProps) {
         });
     };
 
-    const handleDelist = () => {
-        setPendingAction('delist');
-        writeContract({
-            address: CONTRACT_ADDRESS,
-            abi: PropertySaleAbi,
-            functionName: 'delistProperty',
-            args: [BigInt(property.id)],
-        });
-    };
-
     const handleRefundOffer = (offerIndex: number) => {
         setPendingAction('refund');
         setOfferGraceUntil(null);
@@ -380,11 +367,10 @@ export function PropertyCard({ property }: PropertyProps) {
                     {localForSale ? (
                         isOwner ? (
                             <button
-                                onClick={handleDelist}
-                                disabled={isWritePending || isConfirming}
-                                className="h-12 px-6 bg-slate-700 text-slate-200 font-bold rounded-2xl hover:bg-slate-600 active:scale-95 transition-all shadow-lg shadow-slate-700/20 disabled:opacity-50"
+                                disabled
+                                className="h-12 px-6 bg-slate-800 text-slate-400 font-bold rounded-2xl cursor-not-allowed"
                             >
-                                {isWritePending || isConfirming ? 'Processando...' : 'Retirar da venda'}
+                                Gerencie no topo
                             </button>
                         ) : (
                             <button
