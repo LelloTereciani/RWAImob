@@ -12,19 +12,19 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   ponder:
-    build:
-      context: ./indexer
+    image: ${PONDER_IMAGE}
     restart: unless-stopped
     env_file:
       - .env
     environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-ponder}
+    command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "42069"]
     depends_on:
       - postgres
 
   frontend:
-    build:
-      context: ./frontend
+    image: ${FRONTEND_IMAGE}
     restart: unless-stopped
     env_file:
       - .env

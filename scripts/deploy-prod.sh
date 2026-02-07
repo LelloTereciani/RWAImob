@@ -12,8 +12,12 @@ fi
 
 cd "$ROOT_DIR"
 
+if command -v systemctl >/dev/null 2>&1; then
+  systemctl enable --now docker >/dev/null 2>&1 || true
+fi
+
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull --ignore-pull-failures
 
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --build
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d
 
 echo "Deploy completo. Acesse: http://portifolio.cloud/RWAImob"

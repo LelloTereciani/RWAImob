@@ -32,7 +32,7 @@ server {
   }
 
   location /RWAImob/api/healthz {
-    proxy_pass http://ponder:42069/healthz;
+    proxy_pass http://ponder:42069/health;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;
