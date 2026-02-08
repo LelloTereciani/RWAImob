@@ -215,14 +215,12 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
 ---
 
-## 🌍 Acesso ao Marketplace (Local)
+## 🌍 Acesso ao Marketplace (Produção/Estudos)
 
-Após rodar os serviços, acesse:
-👉 **http://localhost:3000/RWAImob**
+Este projeto não usa mais acesso local. O frontend e o Ponder são servidos pela VPS.
 
-> Não usamos mais Ponder local. O indexador aponta para a **testnet Sepolia**.
-> Para API do Ponder, utilize a rota publicada na VPS:
-👉 **http://portifolio.cloud/RWAImob/api**
+- Frontend: 👉 **http://portifolio.cloud/RWAImob**
+- API Ponder: 👉 **http://portifolio.cloud/RWAImob/api**
 
 ---
 
