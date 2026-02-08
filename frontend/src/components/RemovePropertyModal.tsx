@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useWriteContract, useAccount, useWaitForTransactionReceipt, useChainId, useReadContract } from 'wagmi';
 import { PropertySaleAbi } from '../abis/PropertySaleAbi';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0') as `0x${string}`;
 
@@ -15,6 +16,7 @@ export function RemovePropertyModal() {
     const [removeError, setRemoveError] = useState('');
     const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const addRecentTransaction = useAddRecentTransaction();
+    const queryClient = useQueryClient();
 
     const { data: removeHash, writeContract: writeDelist, isPending: isRemoving } = useWriteContract();
     const { isLoading: isRemovingConfirming, isSuccess: isRemoved } = useWaitForTransactionReceipt({ hash: removeHash });
@@ -54,6 +56,10 @@ export function RemovePropertyModal() {
 
     useEffect(() => {
         if (!isRemoved) return;
+        queryClient.invalidateQueries({ queryKey: ['properties'] });
+        const delayedRefetch = setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ['properties'] });
+        }, 2000);
         if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
         successTimeoutRef.current = setTimeout(() => {
             setIsOpen(false);
@@ -61,12 +67,13 @@ export function RemovePropertyModal() {
             setRemoveError('');
         }, 2000);
         return () => {
+            clearTimeout(delayedRefetch);
             if (successTimeoutRef.current) {
                 clearTimeout(successTimeoutRef.current);
                 successTimeoutRef.current = null;
             }
         };
-    }, [isRemoved]);
+    }, [isRemoved, queryClient]);
 
     const handleRemove = (e: React.FormEvent) => {
         e.preventDefault();
