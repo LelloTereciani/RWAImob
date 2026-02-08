@@ -5,6 +5,7 @@ import { useWriteContract, useAccount, useReadContract, useWaitForTransactionRec
 import { parseEther } from 'viem';
 import { PropertySaleAbi } from '../abis/PropertySaleAbi';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0') as `0x${string}`;
 
@@ -18,6 +19,7 @@ export function RegisterPropertyModal() {
         uri: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c'
     });
     const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const queryClient = useQueryClient();
 
     const { data: contractOwner, isLoading: isOwnerLoading } = useReadContract({
         address: CONTRACT_ADDRESS,
@@ -39,6 +41,10 @@ export function RegisterPropertyModal() {
 
     useEffect(() => {
         if (!isSuccess) return;
+        queryClient.invalidateQueries({ queryKey: ['properties'] });
+        const delayedRefetch = setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ['properties'] });
+        }, 2000);
         if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
         successTimeoutRef.current = setTimeout(() => {
             setIsOpen(false);
@@ -49,12 +55,13 @@ export function RegisterPropertyModal() {
             });
         }, 2000);
         return () => {
+            clearTimeout(delayedRefetch);
             if (successTimeoutRef.current) {
                 clearTimeout(successTimeoutRef.current);
                 successTimeoutRef.current = null;
             }
         };
-    }, [isSuccess]);
+    }, [isSuccess, queryClient]);
 
 
     const isPlatformOwner = address && contractOwner && address.toLowerCase() === (contractOwner as string).toLowerCase();
