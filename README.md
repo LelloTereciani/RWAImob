@@ -220,8 +220,9 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 Após rodar os serviços, acesse:
 👉 **http://localhost:3000/RWAImob**
 
-API do Ponder:
-👉 **http://localhost:42069**
+> Não usamos mais Ponder local. O indexador aponta para a **testnet Sepolia**.
+> Para API do Ponder, utilize a rota publicada na VPS:
+👉 **http://portifolio.cloud/RWAImob/api**
 
 ---
 
