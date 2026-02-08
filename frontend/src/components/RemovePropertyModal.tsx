@@ -8,7 +8,13 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0') as `0x${string}`;
 
-export function RemovePropertyModal() {
+type RemovePropertyModalProps = {
+    properties?: Array<{
+        owner?: string;
+    }>;
+};
+
+export function RemovePropertyModal({ properties }: RemovePropertyModalProps) {
     const { address } = useAccount();
     const chainId = useChainId();
     const [isOpen, setIsOpen] = useState(false);
@@ -45,6 +51,9 @@ export function RemovePropertyModal() {
         },
     });
     const hasAnyProperty = Array.isArray(ownerProperties) && ownerProperties.length > 0;
+    const hasPropertyFromList = Boolean(address)
+        && Array.isArray(properties)
+        && properties.some((property) => property.owner && property.owner.toLowerCase() === address!.toLowerCase());
 
     useEffect(() => {
         if (!removeHash || !address || !chainId) return;
@@ -106,7 +115,7 @@ export function RemovePropertyModal() {
             </div>
         );
     }
-    if (!hasAnyProperty) return null;
+    if (!hasAnyProperty && !hasPropertyFromList) return null;
 
     return (
         <div className="mb-12">

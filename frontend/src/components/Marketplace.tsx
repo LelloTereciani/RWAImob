@@ -18,7 +18,7 @@ export function Marketplace() {
         <div className="py-10">
             <div className="flex flex-wrap gap-4 mb-10">
                 <RegisterPropertyModal />
-                <RemovePropertyModal />
+                <RemovePropertyModal properties={listedProperties} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {listedProperties.length > 0 ? (
