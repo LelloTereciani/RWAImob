@@ -18,8 +18,8 @@ fi
 export $(cat .env | grep -v '#' | xargs)
 
 # 2. Subir Infraestrutura
-echo -e "${GREEN}[2/4] Subindo Docker (Postgres & Indexer)...${NC}"
-docker compose up -d db indexer
+echo -e "${GREEN}[2/4] Subindo Docker (Postgres & Ponder)...${NC}"
+docker compose -f docker-compose.prod.yml --env-file .env up -d postgres ponder
 
 # 3. Sincronizar ABI (Garante que o Frontend e Indexador usem o ABI correto e limpo)
 echo -e "${GREEN}[3/4] Sincronizando ABI dos contratos...${NC}"
@@ -34,7 +34,7 @@ fi
 
 # 4. Recriar Indexador (Ponder) para pegar ABI/endereços atualizados
 echo -e "${GREEN}[4/5] Recriando Indexador Ponder (Docker)...${NC}"
-docker compose up -d indexer
+docker compose -f docker-compose.prod.yml --env-file .env up -d ponder
 
 # 5. Iniciar Frontend (Next.js)
 echo -e "${GREEN}[5/5] Iniciando Frontend Next.js...${NC}"

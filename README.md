@@ -63,12 +63,14 @@ Para obter ETH de teste na Sepolia, use um faucet:
 
 ## 🚀 Como Iniciar (Ambiente Local)
 
-A forma mais rápida de subir o **ambiente local** (Postgres + Indexador local + Frontend) é usando o script de automação:
+A forma mais rápida de subir o **ambiente local** (Postgres + Ponder via Docker + Frontend local) é usando o script:
 
 ```bash
 # ⚡ Apenas um comando para subir tudo!
 ./start-local.sh
 ```
+
+> Observação: o projeto usa **apenas** `docker-compose.prod.yml`. O arquivo `docker-compose.yml` foi removido.
 
 ---
 
@@ -79,19 +81,25 @@ A forma mais rápida de subir o **ambiente local** (Postgres + Indexador local +
 ./deploy-sepolia.sh
 ```
 
-2) **Subir indexador (Ponder)**
+2) **Build & push das imagens (GHCR)**
 ```bash
-docker compose up -d --force-recreate indexer
+bash scripts/build-push-ghcr.sh
 ```
 
-3) **Semear imóveis**
+3) **Configurar .env na VPS**
+Garanta:
+- `FRONTEND_IMAGE=ghcr.io/SEU_USUARIO/rwaimob-frontend:latest`
+- `PONDER_IMAGE=ghcr.io/SEU_USUARIO/rwaimob-ponder:latest`
+- `NEXT_PUBLIC_PONDER_URL=/RWAImob/api`
+
+4) **Subir o deploy**
 ```bash
-./seed-assets.sh
+bash scripts/deploy-prod.sh
 ```
 
-4) **Verificar**
+5) **(Opcional) HTTPS**
 ```bash
-./list-properties.sh
+bash scripts/enable-https.sh
 ```
 
 ---
@@ -100,9 +108,9 @@ docker compose up -d --force-recreate indexer
 
 Caso prefira subir cada serviço individualmente:
 
-### 1. 🏗️ Infraestrutura (Postgres + Indexer)
+### 1. 🏗️ Infraestrutura (Postgres + Ponder)
 ```bash
-docker compose up -d
+docker compose -f docker-compose.prod.yml --env-file .env up -d postgres ponder
 ```
 
 ### 2. 📜 Deploy dos Contratos
@@ -151,9 +159,13 @@ Após iniciar o ambiente, você precisa cadastrar os imóveis para que eles apar
 Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
 - 🚀 **Subir o ambiente completo**: `./start-local.sh`  
-  Sobe Docker (Postgres + Indexer), faz deploy opcional na Sepolia, sincroniza ABI e inicia o frontend.
+  Sobe Docker (Postgres + Ponder), sincroniza ABI e inicia o frontend.
 - 🚀 **Deploy real na Sepolia**: `./deploy-sepolia.sh`  
   Faz deploy do contrato, atualiza `NEXT_PUBLIC_CONTRACT_ADDRESS` e `PONDER_START_BLOCK`.
+- 🐳 **Build & push das imagens (GHCR)**: `bash scripts/build-push-ghcr.sh`  
+  Gera as imagens do frontend e do Ponder para produção.
+- 🚀 **Deploy na VPS (produção)**: `bash scripts/deploy-prod.sh`  
+  Sobe os containers usando `docker-compose.prod.yml`.
 - 🏠 **Listar imóvel**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`  
   Registra um imóvel no contrato via Foundry.
 - 🌱 **Semear imóveis padrão**: `./seed-assets.sh`  
@@ -225,6 +237,7 @@ O Ponder fica atrás de:
 - Docker + Docker Compose Plugin instalados
 - DNS apontando `portifolio.cloud` e `www.portifolio.cloud` para o IP da VPS
 - Porta 80 liberada (HTTPS será ativado depois)
+- Acesso ao GHCR (se suas imagens forem privadas)
 
 ### 🧩 Arquivos usados
 - `docker-compose.prod.yml`
@@ -234,7 +247,7 @@ O Ponder fica atrás de:
 
 ### 🚀 Subir tudo na VPS
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+bash scripts/deploy-prod.sh
 ```
 
 ### 🔒 Habilitar HTTPS (Let’s Encrypt)
