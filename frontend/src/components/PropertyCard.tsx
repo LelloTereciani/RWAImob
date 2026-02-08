@@ -94,7 +94,7 @@ export function PropertyCard({ property }: PropertyProps) {
         if (pendingAction === 'offer') description = `Oferta no imóvel #${property.id}`;
         if (pendingAction === 'accept') description = `Aceite de oferta #${property.id}`;
         if (pendingAction === 'withdraw') description = `Retirada de oferta #${property.id}`;
-        if (pendingAction === 'relist') description = `Relistagem do imóvel #${property.id}`;
+        if (pendingAction === 'relist') description = `Colocar imóvel à venda #${property.id}`;
         if (pendingAction === 'refund') description = `Reembolso de oferta #${property.id}`;
 
         addRecentTransaction({
@@ -353,6 +353,9 @@ export function PropertyCard({ property }: PropertyProps) {
                         {property.location ? property.location : `Imóvel #${property.id}`}
                     </h3>
                     <p className="text-slate-500 mt-1 text-xs font-semibold uppercase tracking-wider">ID #{property.id}</p>
+                    <p className="text-slate-400 mt-2 text-[11px] font-mono break-all">
+                        Owner: {localOwner}
+                    </p>
                     {property.locationHash && (
                         <p className="text-slate-400 mt-2 line-clamp-1 text-xs">{property.locationHash}</p>
                     )}
@@ -388,7 +391,7 @@ export function PropertyCard({ property }: PropertyProps) {
                                 disabled={isWritePending || isConfirming}
                                 className="h-12 px-6 bg-amber-500 text-slate-950 font-bold rounded-2xl hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/20"
                             >
-                                {isWritePending || isConfirming ? 'Processando...' : 'Relistar'}
+                                {isWritePending || isConfirming ? 'Processando...' : 'Colocar à venda'}
                             </button>
                         ) : (
                             <button disabled className="h-12 px-6 bg-slate-700 text-slate-400 font-bold rounded-2xl cursor-not-allowed">
