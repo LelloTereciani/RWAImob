@@ -70,7 +70,7 @@ A forma mais rápida de subir o **ambiente local** (Postgres + Ponder via Docker
 ./start-local.sh
 ```
 
-> Observação: o projeto usa **apenas** `docker-compose.prod.yml`. O arquivo `docker-compose.yml` foi removido.
+> Observação: em produção, o app (`docker-compose.prod.yml`) roda separado do edge proxy (`infra/edge-proxy/docker-compose.yml`).
 
 ---
 
@@ -92,12 +92,12 @@ Garanta:
 - `PONDER_IMAGE=ghcr.io/SEU_USUARIO/rwaimob-ponder:latest`
 - `NEXT_PUBLIC_PONDER_URL=/RWAImob/api`
 
-4) **Subir o deploy**
+4) **Subir app stack**
 ```bash
 bash scripts/deploy-prod.sh
 ```
 
-5) **(Opcional) HTTPS**
+5) **(Uma vez) emitir HTTPS no edge**
 ```bash
 bash scripts/enable-https.sh
 ```
@@ -165,7 +165,15 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 - 🐳 **Build & push das imagens (GHCR)**: `bash scripts/build-push-ghcr.sh`  
   Gera as imagens do frontend e do Ponder para produção.
 - 🚀 **Deploy na VPS (produção)**: `bash scripts/deploy-prod.sh`  
-  Sobe os containers usando `docker-compose.prod.yml`.
+  Sobe/atualiza `postgres`, `ponder`, `frontend` e conecta na rede `edge`.
+- 🌐 **Deploy do edge proxy**: `bash infra/edge-proxy/scripts/deploy-edge.sh`  
+  Sobe o Nginx dedicado que atende 80/443 para toda a VPS.
+- 🔒 **Emitir HTTPS**: `bash scripts/enable-https.sh`  
+  Emite certificado Let's Encrypt e recarrega o edge proxy.
+- 🔁 **Renovar HTTPS**: `bash scripts/renew-certs-and-reload-nginx.sh`  
+  Executa renovação e reload do Nginx.
+- 🧹 **Limpeza de logs (2 dias)**: `bash scripts/cleanup-project-logs-2days.sh`
+  Remove logs locais de npm com mais de 2 dias.
 - 🏠 **Listar imóvel**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`  
   Registra um imóvel no contrato via Foundry.
 - 🌱 **Semear imóveis padrão**: `./seed-assets.sh`  
@@ -217,55 +225,73 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
 
 ## 🌍 Acesso ao Marketplace (Produção/Estudos)
 
-Este projeto não usa mais acesso local. O frontend e o Ponder são servidos pela VPS.
+Este projeto é servido por um edge proxy dedicado na VPS.
 
-- Frontend: 👉 **http://portifolio.cloud/RWAImob**
-- API Ponder: 👉 **http://portifolio.cloud/RWAImob/api**
+- Frontend: 👉 **https://portifolio.cloud/RWAImob**
+- API Ponder: 👉 **https://portifolio.cloud/RWAImob/api**
 
 ---
 
-## 🌐 VPS (Hostinger) com Docker + Nginx (Produção/Estudos)
+## 🌐 VPS (Hostinger) com Edge Proxy Dedicado (Produção/Estudos)
 
-Esta estrutura usa **Docker Compose** e expõe o frontend em:
-👉 **http://portifolio.cloud/RWAImob**
+Arquitetura atual:
+- `infra/edge-proxy/docker-compose.yml`: Nginx de borda (80/443, TLS, roteamento)
+- `docker-compose.prod.yml`: stack da aplicação RWAImob (`postgres`, `ponder`, `frontend`)
+- `stellar-explorer` backend em container separado, conectado na mesma rede Docker `edge`
 
-O Ponder fica atrás de:
-👉 **http://portifolio.cloud/RWAImob/api**
+Roteamento principal no edge:
+- `/` e `/explorer` (estáticos em `/var/www/html`)
+- `/RWAImob` -> `rwaimob-frontend:3000`
+- `/RWAImob/api` -> `rwaimob-ponder:42069`
+- `/api` -> `stellar-explorer-backend:3001`
 
 ### ✅ Pré-requisitos na VPS
 - Docker + Docker Compose Plugin instalados
 - DNS apontando `portifolio.cloud` e `www.portifolio.cloud` para o IP da VPS
-- Porta 80 liberada (HTTPS será ativado depois)
+- Portas 80 e 443 liberadas
 - Acesso ao GHCR (se suas imagens forem privadas)
+- Rede Docker compartilhada `edge` (criada automaticamente pelos scripts)
 
 ### 🧩 Arquivos usados
-- `docker-compose.prod.yml`
-- `nginx/conf.d/default.conf`
-- `nginx/ssl.conf.template`
+- `docker-compose.prod.yml` (RWAImob app stack)
+- `infra/edge-proxy/docker-compose.yml` (edge proxy)
+- `infra/edge-proxy/nginx/conf.d/default.conf`
+- `infra/edge-proxy/.env` (com `LETSENCRYPT_EMAIL`)
 - `.env` (usado também em produção)
 
-### 🚀 Subir tudo na VPS
+### 🚀 Subir stack da aplicação
 ```bash
 bash scripts/deploy-prod.sh
 ```
 
+### 🌐 Subir edge proxy
+```bash
+bash infra/edge-proxy/scripts/deploy-edge.sh
+```
+
 ### 🔒 Habilitar HTTPS (Let’s Encrypt)
-1) Adicione no `.env`:
+1) Crie `infra/edge-proxy/.env` com:
 ```bash
 LETSENCRYPT_EMAIL=seu-email@dominio.com
 ```
 
 2) Execute:
 ```bash
-./scripts/enable-https.sh
+bash scripts/enable-https.sh
 ```
 
-Após isso, o acesso deve ficar em:
-👉 **https://portifolio.cloud/RWAImob**
+### ♻️ Rotina de renovação e logs (2 dias)
+```bash
+bash infra/edge-proxy/scripts/install-ops.sh
+```
+Esse comando instala:
+- Cron de renovação TLS + reload do Nginx
+- Cron de limpeza de logs locais de npm
+- `logrotate` diário mantendo 2 dias para logs de containers e logs de projeto
 
 ### ✅ Healthcheck
-- `http://portifolio.cloud/healthz`
-- `http://portifolio.cloud/RWAImob/api/healthz`
+- `https://portifolio.cloud/healthz`
+- `https://portifolio.cloud/RWAImob/api/healthz`
 
 ---
 

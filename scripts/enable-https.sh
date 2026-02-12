@@ -3,10 +3,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$ROOT_DIR/.env"
-COMPOSE_FILE="$ROOT_DIR/docker-compose.prod.yml"
+EDGE_DIR="$ROOT_DIR/infra/edge-proxy"
+EDGE_ENV_FILE="$EDGE_DIR/.env"
+EDGE_SCRIPT="$EDGE_DIR/scripts/issue-https.sh"
 
 if [ ! -f "$ENV_FILE" ]; then
   echo "Missing $ENV_FILE. Create it first." >&2
+  exit 1
+fi
+
+if [ ! -x "$EDGE_SCRIPT" ]; then
+  echo "Missing $EDGE_SCRIPT" >&2
   exit 1
 fi
 
@@ -16,31 +23,9 @@ if [ -z "$EMAIL" ]; then
   exit 1
 fi
 
-cd "$ROOT_DIR"
+mkdir -p "$EDGE_DIR"
+printf 'LETSENCRYPT_EMAIL=%s\n' "$EMAIL" > "$EDGE_ENV_FILE"
 
-# Ensure nginx is up to serve the ACME challenge
+"$EDGE_SCRIPT"
 
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d nginx
-
-# Request certificate
-
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" run --rm --entrypoint certbot certbot certonly \
-  --webroot \
-  --webroot-path /var/www/certbot \
-  -d portifolio.cloud \
-  -d www.portifolio.cloud \
-  --email "$EMAIL" \
-  --agree-tos \
-  --no-eff-email
-
-# Enable SSL config after certs are issued
-
-if [ -f "$ROOT_DIR/nginx/ssl.conf.template" ]; then
-  cp "$ROOT_DIR/nginx/ssl.conf.template" "$ROOT_DIR/nginx/conf.d/ssl.conf"
-fi
-
-# Reload nginx to use the certs
-
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec nginx nginx -s reload
-
-echo "HTTPS ativado. Acesse: https://portifolio.cloud/RWAImob"
+echo "HTTPS ativado no edge proxy. Acesse: https://portifolio.cloud/RWAImob"

@@ -1,0 +1,33 @@
+services:
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot_www:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+      - /var/www/html:/usr/share/nginx/html
+    networks:
+      - edge
+
+  certbot:
+    image: certbot/certbot:latest
+    restart: "no"
+    profiles: ["manual-certbot"]
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+
+volumes:
+  certbot_www:
+    name: rwaimob_certbot_www
+  certbot_certs:
+    name: rwaimob_certbot_certs
+
+networks:
+  edge:
+    external: true
+    name: edge

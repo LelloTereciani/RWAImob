@@ -20,6 +20,11 @@ services:
     command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "42069"]
     depends_on:
       - postgres
+    networks:
+      default:
+      edge:
+        aliases:
+          - rwaimob-ponder
 
   frontend:
     image: ${FRONTEND_IMAGE}
@@ -30,37 +35,16 @@ services:
       NEXT_PUBLIC_PONDER_URL: /RWAImob/api
     depends_on:
       - ponder
-
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - /var/www/html:/usr/share/nginx/html
-      - certbot_www:/var/www/certbot
-      - certbot_certs:/etc/letsencrypt
-    depends_on:
-      - frontend
-      - ponder
-
-  certbot:
-    image: certbot/certbot:latest
-    restart: "no"
-    profiles: ["manual-certbot"]
-    volumes:
-      - certbot_www:/var/www/certbot
-      - certbot_certs:/etc/letsencrypt
-    entrypoint: /bin/sh -c
-    command: >-
-      "trap exit TERM; while :; do
-        certbot renew --webroot -w /var/www/certbot --quiet;
-        sleep 12h;
-      done"
+    networks:
+      default:
+      edge:
+        aliases:
+          - rwaimob-frontend
 
 volumes:
   postgres_data:
-  certbot_www:
-  certbot_certs:
+
+networks:
+  edge:
+    external: true
+    name: edge
