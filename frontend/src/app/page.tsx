@@ -1,12 +1,9 @@
 'use client';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
 import { Marketplace } from '../components/Marketplace';
+import { WalletButton } from '../components/WalletButton';
 
 export default function LandingPage() {
-  const { isConnected } = useAccount();
-
   return (
     <div className="min-h-screen bg-slate-950 text-white selection:bg-emerald-500/30">
       {/* Navigation */}
@@ -22,7 +19,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-8">
             <a href="#marketplace" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Marketplace</a>
             <a href="#" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Home</a>
-            <ConnectButton />
+            <WalletButton />
           </div>
         </div>
       </nav>

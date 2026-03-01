@@ -32,6 +32,7 @@ services:
     env_file:
       - .env
     environment:
+      HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_PONDER_URL: /RWAImob/api
     depends_on:
       - ponder
