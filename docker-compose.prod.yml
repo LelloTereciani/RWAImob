@@ -8,16 +8,21 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   ponder:
     image: ${PONDER_IMAGE}
-    restart: unless-stopped
+    restart: on-failure:5
     env_file:
       - .env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-ponder}
-    command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "42069"]
+    command: ["npm", "run", "start", "--", "--hostname", "0.0.0.0", "--port", "42069"]
     depends_on:
       - postgres
     networks:
@@ -25,6 +30,11 @@ services:
       edge:
         aliases:
           - rwaimob-ponder
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     image: ${FRONTEND_IMAGE}
@@ -41,6 +51,11 @@ services:
       edge:
         aliases:
           - rwaimob-frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
