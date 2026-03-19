@@ -41,11 +41,13 @@ Este projeto utiliza o poder da **Blockchain** para trazer liquidez, transparên
 Este projeto foi configurado **exclusivamente** para a **testnet Sepolia**. Não use em mainnet.
 Garanta no `.env`:
 
-- `PONDER_RPC_URL_11155111`
+- `PONDER_RPC_URL_11155111` — URL do nó RPC Sepolia (use nó público como fallback: `https://ethereum-sepolia-rpc.publicnode.com`)
 - `RPC_URL`
 - `NEXT_PUBLIC_CONTRACT_ADDRESS`
 - `NEXT_PUBLIC_SEPOLIA_RPC_URL`
 - `NEXT_PUBLIC_PONDER_URL`
+
+> ⚠️ **Chaves Alchemy expiram ou atingem limites de taxa.** Use sempre um nó público como fallback para evitar que o Ponder entre em loop de erro e consuma CPU excessivamente.
 
 ---
 
@@ -124,7 +126,9 @@ forge script script/deploy/DeployPropertySale.s.sol --rpc-url $RPC_URL --broadca
 ```bash
 cd indexer
 npm install
+# Ambiente local (hot-reload):
 npm run dev
+# Produção (via Docker/VPS): usa 'npm run start' — não use 'dev' em produção!
 ```
 
 ### 4. ⚛️ Frontend (Next.js)
@@ -172,8 +176,10 @@ Criamos scripts facilitadores para gerenciar seus ativos e o ambiente:
   Emite certificado Let's Encrypt e recarrega o edge proxy.
 - 🔁 **Renovar HTTPS**: `bash scripts/renew-certs-and-reload-nginx.sh`  
   Executa renovação e reload do Nginx.
-- 🧹 **Limpeza de logs (2 dias)**: `bash scripts/cleanup-project-logs-2days.sh`
+- 🧹 **Limpeza de logs (2 dias)**: `bash scripts/cleanup-project-logs-2days.sh`  
   Remove logs locais de npm com mais de 2 dias.
+- 🐳 **Limpeza Docker (semanal)**: `bash scripts/cleanup-docker.sh`  
+  Remove imagens, containers, redes e build cache inativos. Executado automaticamente pelo cron toda domingo às 04:00 no servidor. Log em `/var/log/docker-cleanup.log`.
 - 🏠 **Listar imóvel**: `./list-asset.sh "Nome" "Preço ETH" "URL Imagem"`  
   Registra um imóvel no contrato via Foundry.
 - 🌱 **Semear imóveis padrão**: `./seed-assets.sh`  
@@ -280,7 +286,7 @@ LETSENCRYPT_EMAIL=seu-email@dominio.com
 bash scripts/enable-https.sh
 ```
 
-### ♻️ Rotina de renovação e logs (2 dias)
+### ♻️ Rotina de renovação, logs e limpeza automática
 ```bash
 bash infra/edge-proxy/scripts/install-ops.sh
 ```
@@ -288,6 +294,18 @@ Esse comando instala:
 - Cron de renovação TLS + reload do Nginx
 - Cron de limpeza de logs locais de npm
 - `logrotate` diário mantendo 2 dias para logs de containers e logs de projeto
+
+**Cron jobs ativos no servidor (sudo crontab):**
+
+| Horário | Tarefa |
+|---|---|
+| 03:17 e 15:17 (diário) | Renovação SSL + reload Nginx |
+| 03:27 (diário) | Limpeza de logs npm >2 dias |
+| 04:00 (domingo) | Limpeza Docker (imagens, cache, redes, containers parados) |
+
+**Limites de log dos containers** (configurado em `docker-compose.prod.yml`):
+- Máximo de **10MB por arquivo** e **3 arquivos rotativos** por serviço
+- Impede acúmulo ilimitado de logs no disco do servidor
 
 ### ✅ Healthcheck
 - `https://portifolio.cloud/healthz`
